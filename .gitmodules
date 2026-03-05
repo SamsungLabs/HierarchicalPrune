@@ -1,0 +1,6 @@
+[submodule "metrics/HPSv2"]
+	path = metrics/HPSv2
+	url = https://github.com/theyoungkwon/HPSv2.git
+[submodule "metrics/geneval"]
+	path = metrics/geneval
+	url = https://github.com/djghosh13/geneval.git

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+    content="HierarchicalPrune: Position-Aware Compression for Large-Scale Diffusion Models for on-device deployment.">
+  <meta name="keywords"
+    content="HierarchicalPrune, Diffusion Models, Model Distillation, Pruning, Stable Diffusion, Flux, On-Device AI, Knowledge Distillation">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HierarchicalPrune</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+  <!-- Title, Authors, Links -->
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+
+            <h1 class="title is-1 publication-title">
+              <span class="hprune">HierarchicalPrune</span>
+            </h1>
+            <h2 class="title is-3 publication-subtitle">
+              Position-Aware Compression for Large-Scale Diffusion Models
+            </h2>
+
+            <p style="color: #aa0404; font-size: 1.7rem; font-weight: bold; text-align: center; margin: 12px 0;">AAAI
+              2026</p>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><a href="https://theyoungkwon.github.io/">Young D. Kwon</a><sup>1*</sup>,</span>
+              <span class="author-block"><a href="https://ruihuili.github.io/">Rui Li</a><sup>1*</sup>,</span>
+              <span class="author-block"><a href="https://scholar.google.com/citations?user=q5IxFooAAAAJ">Sijia Li</a><sup>2</sup>,</span>
+              <span class="author-block"><a href="https://dali-dl.github.io/">Da Li</a><sup>1</sup>,</span>
+              <span class="author-block"><a href="https://sites.google.com/view/sourav-bhattacharya/home">Sourav Bhattacharya</a><sup>1</sup>,</span>
+              <span class="author-block"><a href="https://steliosven10.github.io/">Stylianos I. Venieris</a><sup>1</sup></span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>Samsung AI Center-Cambridge,</span>
+              <span class="author-block"><sup>2</sup>Independent Researcher</span>
+            </div>
+
+            <div class="is-size-6 publication-authors">
+              <span class="author-block"><sup>*</sup>Equal contribution</span>
+            </div>
+
+            <div class="institution-logos">
+              <img src="./static/images/logo/samsung_research_logo.png" alt="Samsung AI Center"
+                style="height: 60px; width: auto;">
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <span class="link-block">
+                <a href="https://arxiv.org/pdf/2508.04663" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                <span>Paper</span>
+                </a>
+                </span>
+                <span class="link-block">
+                <a href="https://arxiv.org/abs/2508.04663" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                <span>arXiv</span>
+                </a>
+                </span>
+                <span class="link-block">
+                <a href="https://github.com/SamsungLabs/HierarchicalPrune"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                <span>Code</span>
+                </a>
+                </span>
+                <!-- <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-cube"></i></span>
+                  <span>Models</span>
+                </a>
+              </span> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Teaser: 4x2 grid -->
+  <section class="hero teaser">
+    <div class="container">
+      <div class="hero-body">
+        <div class="teaser-grid">
+          <div class="teaser-grid__item">
+            <img src="./static/images/intro_gallery/1.jpg" alt="Sample 1">
+          </div>
+          <div class="teaser-grid__item">
+            <img src="./static/images/intro_gallery/2.jpg" alt="Sample 2">
+          </div>
+          <div class="teaser-grid__item">
+            <img src="./static/images/intro_gallery/3.jpg" alt="Sample 3">
+          </div>
+          <div class="teaser-grid__item">
+            <img src="./static/images/intro_gallery/4.jpg" alt="Sample 4">
+          </div>
+          <div class="teaser-grid__item">
+            <img src="./static/images/intro_gallery/5.jpg" alt="Sample 5">
+          </div>
+          <div class="teaser-grid__item">
+            <img src="./static/images/intro_gallery/6.jpg" alt="Sample 6">
+          </div>
+          <div class="teaser-grid__item">
+            <img src="./static/images/intro_gallery/7.jpg" alt="Sample 7">
+          </div>
+          <div class="teaser-grid__item">
+            <img src="./static/images/intro_gallery/8.jpg" alt="Sample 8">
+          </div>
+        </div>
+        <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">
+          High-resolution image samples generated by our compressed model using
+          <span class="hprune">HierarchicalPrune</span>, showcasing superior visual quality across
+          various visual styles, precisely following text prompts, and preserving the ability to
+          render typography.
+        </h2>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Sample Gallery -->
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container">
+        <div id="results-carousel" class="carousel results-carousel">
+          <div class="card">
+            <div class="card-image">
+              <img src="./static/images/intro_gallery/9.jpg">
+            </div>
+            <div class="card-content has-text-centered">The image features a cyberpunk goddess with no mouth, intricate
+              details, neon lighting, and sweat drops.</div>
+          </div>
+          <div class="card">
+            <div class="card-image">
+              <img src="./static/images/intro_gallery/10.jpg">
+            </div>
+            <div class="card-content has-text-centered">A 3D rendering of Jakarta with yellowish light, resembling the
+              real city.</div>
+          </div>
+          <div class="card">
+            <div class="card-image">
+              <img src="./static/images/intro_gallery/11.jpg">
+            </div>
+            <div class="card-content has-text-centered">A person staring into a lucid dream world with an adventure
+              waiting.</div>
+          </div>
+          <div class="card">
+            <div class="card-image">
+              <img src="./static/images/intro_gallery/12.jpg">
+            </div>
+            <div class="card-content has-text-centered">A galaxy-colored DnD dice is shown against a sunset over a sea,
+              in artwork by Greg Rutkowski and Thomas Kinkade that is trending on Artstation.</div>
+          </div>
+          <div class="card">
+            <div class="card-image">
+              <img src="./static/images/intro_gallery/13.jpg">
+            </div>
+            <div class="card-content has-text-centered">A pre-Raphaelite mixed media portrait painting with ornamental
+              art nouveau fashion embroidery, featuring a piercing gaze and dayglo colors.</div>
+          </div>
+          <div class="card">
+            <div class="card-image">
+              <img src="./static/images/intro_gallery/14.jpg">
+            </div>
+            <div class="card-content has-text-centered">Psytrance artwork featuring a futuristic, intergalactic battle
+              scene with intricate detail and vibrant colors, inspired by the video game Starcraft.</div>
+          </div>
+          <div class="card">
+            <div class="card-image">
+              <img src="./static/images/intro_gallery/15.jpg">
+            </div>
+            <div class="card-content has-text-centered">The image depicts an angel protecting a child, created by Boris
+              Groh, Makoto Shinkai, Thomas Kinkade, or James Gilleard, and is available on DeviantArt and ArtStation.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-image">
+              <img src="./static/images/intro_gallery/16.jpg">
+            </div>
+            <div class="card-content has-text-centered">The image is of a massive cave interior filled with glowing
+              stalactites and stalagmites.</div>
+          </div>
+          <div class="card">
+            <div class="card-image">
+              <img src="./static/images/intro_gallery/17.jpg">
+            </div>
+            <div class="card-content has-text-centered">A spacecraft firing a railgun at a crumbling planet in a space
+              background.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- About / Abstract -->
+  <section class="section" id="about">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">About <span class="hprune">HierarchicalPrune</span></h2>
+          <div class="content has-text-justified">
+            <p>
+              Recent large-scale diffusion models such as SD3.5 (8B) and FLUX (11B) deliver
+              outstanding image quality, but their excessive memory and compute demands limit
+              deployment on resource-constrained devices. Existing depth-pruning methods achieve
+              reasonable compression on smaller U-Net-based models, yet fail to scale to these
+              large MMDiT-based architectures without significant quality degradation.
+            </p>
+            <p>
+              <span class="hprune">HierarchicalPrune</span> identifies a novel <strong>dual
+            hierarchical structure</strong> in MMDiT-based diffusion models: an
+              <em>inter-block</em> hierarchy (early blocks establish semantics, later blocks handle
+              refinements) and an <em>intra-block</em> hierarchy (varying importance of subcomponents
+              within each block). It exploits this structure through three principled techniques:
+            </p>
+            <ul>
+              <li><strong>Hierarchical Position Pruning (HPP)</strong>: strategically maintains early blocks that form
+                core image structures while pruning later, less critical blocks</li>
+              <li><strong>Positional Weight Preservation (PWP)</strong>: freezes non-pruned early portions during
+                distillation, preserving blocks essential for image formation</li>
+              <li><strong>Sensitivity-Guided Distillation (SGDistill)</strong>: applies inverse distillation weights,
+                assigning minimal updates to the most important (and sensitive) blocks while concentrating learning on
+                less sensitive components</li>
+            </ul>
+            <p>
+              Combined with INT4 quantisation, <span class="hprune">HierarchicalPrune</span> achieves
+              <strong>77.5&ndash;80.4% memory reduction</strong> with minimal quality loss
+              (4.8&ndash;5.3% user-perceived degradation compared to the original model) with 95% confidence intervals,
+              significantly outperforming prior methods
+              (11.1&ndash;52.2% degradation). A user study with 85 participants confirms the
+              superiority of our approach.
+            </p>
+          </div>
+
+          <img src="./static/images/figures/hierarchicalprune_teaser.png"
+            alt="Figure 1: HierarchicalPrune Teaser Figure" class="inserted-image">
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Method Overview -->
+  <section class="section" style="background-color: #f9f9f9;" id="method">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Method Overview</h2>
+          <div class="content has-text-justified">
+            <p>
+              <span class="hprune">HierarchicalPrune</span>&rsquo;s compression framework leverages
+              MMDiT&rsquo;s two-fold hierarchy (<em>inter-block</em>: early blocks establish semantics,
+              later blocks refine; <em>intra-block</em>: varying subcomponent importance). It comprises
+              (1)&nbsp;<strong>HPP</strong>, maintaining early blocks while pruning later ones,
+              (2)&nbsp;<strong>PWP</strong>, freezing critical early blocks during distillation, and
+              (3)&nbsp;<strong>SGDistill</strong>, applying inverse weights: minimal updates to
+              sensitive blocks and subcomponents. The resulting framework enables effective compression
+              while preserving model capabilities.
+            </p>
+          </div>
+
+          <img src="./static/images/figures/hierarchicalprune_method_overview.png"
+            alt="Figure 2: HierarchicalPrune Method Overview" class="inserted-image">
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Contribution Analysis -->
+  <section class="section" id="analysis">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <h2 class="title is-3">Contribution Analysis</h2>
+          <div class="content has-text-justified">
+            <p>
+              We perform fine-grained contribution analysis on SD3.5 Large Turbo to understand the
+              importance of each transformer block and its subcomponents. Beyond conventional full-block
+              removal, we analyse individual and joint subcomponent removal, uncovering an
+              <em>intra-block</em> hierarchy: different subcomponent types exhibit distinct sensitivity
+              patterns, and their pairwise interactions reveal both critical interdependencies and
+              potentially redundant pathways within the MMDiT architecture.
+            </p>
+          </div>
+
+          <figure class="inserted-figure">
+            <img src="./static/images/figures/hierarchicalprune_cont_analysis_1.png"
+              alt="Figure 3: HierarchicalPrune Contribution Analysis 1" class="inserted-image">
+            <figcaption class="figure-caption">
+              <strong>Figure 3.</strong> Fine-grained contribution analysis of SD3.5 Large Turbo on the HPSv2 dataset by
+              individually removing either an entire MMDiT block or an intra-block subcomponent. We report the
+              performance drop compared to the original model. (a)&nbsp;An entire MMDiT block is removed following prior
+              depth pruning approaches. (b,c,d,e,f)&nbsp;Each subcomponent type of a MMDiT block is removed
+              independently, revealing different patterns of importance across subcomponents.
+            </figcaption>
+          </figure>
+
+          <figure class="inserted-figure">
+            <img src="./static/images/figures/hierarchicalprune_cont_analysis_2.png"
+              alt="Figure 4: HierarchicalPrune Contribution Analysis 2" class="inserted-image">
+            <figcaption class="figure-caption">
+              <strong>Figure 4.</strong> Fine-grained contribution analysis of SD3.5 Large Turbo on the HPSv2 dataset by
+              jointly removing pairs of subcomponent types. The performance drop follows distinct interaction patterns
+              for different pairs, with most combinations leading to significant degradation concentrated in earlier
+              blocks. A notable exception is Context Norm + Context MLP (d), which demonstrates minimal impact.
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Visual Comparisons -->
+  <section class="section" id="results">
+    <div class="container">
+      <h2 class="title is-3 has-text-centered">Visual Comparisons</h2>
+      <p class="has-text-centered" style="margin-bottom: 2rem; color: #666; font-size: 1.1rem">
+        Side-by-side comparison at 1024&times;1024 resolution.
+        <span style="color: #999; font-size: 0.95rem;">* Different architecture, shown for reference.</span>
+      </p>
+
+      <!-- Column headers (persistent) -->
+      <div class="comparison-grid comparison-grid--header">
+        <div class="comparison-grid__cell comparison-grid__ref">
+          <p class="comparison-label">SD3.5 Large<br><span class="comparison-sublabel">(Original)</span></p>
+        </div>
+        <div class="comparison-grid__divider"></div>
+        <div class="comparison-grid__cell">
+          <p class="comparison-label">BK-SDM</p>
+        </div>
+        <div class="comparison-grid__cell">
+          <p class="comparison-label">KOALA</p>
+        </div>
+        <div class="comparison-grid__cell">
+          <p class="comparison-label highlight">Ours</p>
+        </div>
+        <div class="comparison-grid__divider"></div>
+        <div class="comparison-grid__cell comparison-grid__ref">
+          <p class="comparison-label">SANA-Sprint*<br><span class="comparison-sublabel">(Diff. Arch.)</span></p>
+        </div>
+      </div>
+
+      <!-- Comparison Row 1 -->
+      <div class="comparison-grid">
+        <div class="comparison-grid__cell comparison-grid__ref">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/original_1.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__divider"></div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/bksdm_1.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/koala_1.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card highlight-card">
+            <img src="./static/images/comparisons/ours_1.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__divider"></div>
+        <div class="comparison-grid__cell comparison-grid__ref">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/Sana_Sprint_1.6B_1.jpg">
+          </div>
+        </div>
+      </div>
+      <p class="comparison-prompt">&ldquo;A painting of a Persian cat dressed as a Renaissance king, standing on a
+        skyscraper overlooking a city.&rdquo;</p>
+
+      <!-- Comparison Row 2 -->
+      <div class="comparison-grid">
+        <div class="comparison-grid__cell comparison-grid__ref">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/original_2.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__divider"></div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/bksdm_2.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/koala_2.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card highlight-card">
+            <img src="./static/images/comparisons/ours_2.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__divider"></div>
+        <div class="comparison-grid__cell comparison-grid__ref">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/Sana_Sprint_1.6B_2.jpg">
+          </div>
+        </div>
+      </div>
+      <p class="comparison-prompt">&ldquo;A kangaroo in an orange hoodie and blue sunglasses stands on the grass in
+        front of the Sydney Opera House&rdquo;</p>
+
+      <!-- Comparison Row 3 -->
+      <div class="comparison-grid">
+        <div class="comparison-grid__cell comparison-grid__ref">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/original_3.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__divider"></div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/bksdm_3.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/koala_3.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card highlight-card">
+            <img src="./static/images/comparisons/ours_3.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__divider"></div>
+        <div class="comparison-grid__cell comparison-grid__ref">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/Sana_Sprint_1.6B_3.jpg">
+          </div>
+        </div>
+      </div>
+      <p class="comparison-prompt">&ldquo;A digital illustration of a beautiful and alluring American SWAT team in
+        dramatic poses&rdquo;</p>
+
+      <!-- Comparison Row 4 -->
+      <div class="comparison-grid">
+        <div class="comparison-grid__cell comparison-grid__ref">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/original_4.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__divider"></div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/bksdm_4.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/koala_4.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card highlight-card">
+            <img src="./static/images/comparisons/ours_4.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__divider"></div>
+        <div class="comparison-grid__cell comparison-grid__ref">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/Sana_Sprint_1.6B_4.jpg">
+          </div>
+        </div>
+      </div>
+      <p class="comparison-prompt">&ldquo;Male character illustration by Gaston Bussiere.&rdquo;</p>
+
+      <!-- Comparison Row 5 -->
+      <div class="comparison-grid">
+        <div class="comparison-grid__cell comparison-grid__ref">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/original_5.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__divider"></div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/bksdm_5.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/koala_5.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card highlight-card">
+            <img src="./static/images/comparisons/ours_5.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__divider"></div>
+        <div class="comparison-grid__cell comparison-grid__ref">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/Sana_Sprint_1.6B_5.jpg">
+          </div>
+        </div>
+      </div>
+      <p class="comparison-prompt">&ldquo;A close-up portrait of a beautiful girl with an autumn leaves headdress and
+        melting wax.&rdquo;</p>
+
+      <!-- Comparison Row 6 -->
+      <div class="comparison-grid">
+        <div class="comparison-grid__cell comparison-grid__ref">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/original_6.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__divider"></div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/bksdm_6.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/koala_6.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__cell">
+          <div class="comparison-card highlight-card">
+            <img src="./static/images/comparisons/ours_6.jpg">
+          </div>
+        </div>
+        <div class="comparison-grid__divider"></div>
+        <div class="comparison-grid__cell comparison-grid__ref">
+          <div class="comparison-card">
+            <img src="./static/images/comparisons/Sana_Sprint_1.6B_6.jpg">
+          </div>
+        </div>
+      </div>
+      <p class="comparison-prompt">&ldquo;A smiling man is cooking in his kitchen.&rdquo;</p>
+
+    </div>
+  </section>
+
+
+  <!-- BibTeX -->
+  <section class="section" id="bibtex">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@inproceedings{kwon2026hierarchicalprune,
+    title     = {{HierarchicalPrune: Position-Aware Compression for Large-Scale Diffusion Models}},
+    author    = {Kwon, Young D. and Li, Rui and Li, Sijia and Li, Da and Bhattacharya, Sourav and Venieris, Stylianos I.},
+    booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence (AAAI)},
+    year      = {2026},
+}</code></pre>
+    </div>
+  </section>
+
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered">
+        <a class="icon-link" href="https://arxiv.org/pdf/2508.04663" aria-label="Paper PDF">
+          <i class="fas fa-file-pdf"></i>
+        </a>
+        <a class="icon-link" href="https://github.com/SamsungLabs/HierarchicalPrune" aria-label="GitHub">
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content has-text-centered">
+            <p>
+              This website is licensed under a
+              <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> License.
+              Template borrowed from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
